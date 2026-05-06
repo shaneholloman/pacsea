@@ -82,20 +82,28 @@ impl UpdateCheckPayload {
 }
 
 /// Libalpm / pacman sandbox could not apply Landlock rules (non-root temp sync).
+#[cfg(not(target_os = "windows"))]
 pub const REASON_LANDLOCK_SANDBOX_FAILURE: &str = "landlock_sandbox_failure";
 /// Switching to sandbox user `alpm` failed during pacman operations.
+#[cfg(not(target_os = "windows"))]
 pub const REASON_ALPM_SANDBOX_FAILURE: &str = "alpm_sandbox_failure";
 /// Generic permission / operation-not-permitted style failure text.
+#[cfg(not(target_os = "windows"))]
 pub const REASON_PERMISSION_DENIED: &str = "permission_denied";
 /// `fakeroot pacman -Sy --dbpath` failed for the temp database.
+#[cfg(not(target_os = "windows"))]
 pub const REASON_TEMP_DB_SYNC_FAILED: &str = "temp_db_sync_failed";
 /// `checkupdates` exited with an error (not 0 or 1).
+#[cfg(not(target_os = "windows"))]
 pub const REASON_CHECKUPDATES_FAILED: &str = "checkupdates_failed";
 /// Fell back to system `pacman -Qu` without a fresh sync.
+#[cfg(not(target_os = "windows"))]
 pub const REASON_STALE_DB_FALLBACK: &str = "stale_db_fallback";
 /// `fakeroot` was missing so temp-db sync was skipped.
+#[cfg(not(target_os = "windows"))]
 pub const REASON_FAKEROOT_UNAVAILABLE: &str = "fakeroot_unavailable";
 /// `checkupdates` was missing when needed as a non-root fresh sync path.
+#[cfg(not(target_os = "windows"))]
 pub const REASON_CHECKUPDATES_UNAVAILABLE: &str = "checkupdates_unavailable";
 
 /// What: Map pacman-related stderr to structured reason codes for logs and metrics.
@@ -108,6 +116,7 @@ pub const REASON_CHECKUPDATES_UNAVAILABLE: &str = "checkupdates_unavailable";
 ///
 /// Details:
 /// - Matching is ASCII-lowercased substring search to tolerate localized prefix text.
+#[cfg(not(target_os = "windows"))]
 pub fn classify_pacman_stderr_for_update_check(stderr: &str) -> Vec<String> {
     let lower = stderr.to_lowercase();
     let mut out = Vec::new();
@@ -272,7 +281,7 @@ pub fn sync_temp_db(temp_db: &std::path::Path) -> Result<(), String> {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(target_os = "windows")))]
 mod tests {
     use super::*;
 
